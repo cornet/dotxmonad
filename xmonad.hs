@@ -17,6 +17,9 @@ import DBus.Connection
 import DBus.Message
 import Control.OldException
 import Control.Monad
+import qualified XMonad.Prompt         as P
+import qualified XMonad.Actions.Search as S
+import qualified XMonad.Actions.Submap as SM
 import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 
@@ -31,6 +34,7 @@ getWellKnownName dbus = tryGetName `catchDyn` (\ (DBus.Error _ _) ->
     addArgs namereq [String "org.xmonad.Log", Word32 5]
     sendWithReplyAndBlock dbus namereq 0
     return ()
+
 
 --
 -- My Manage Hook
@@ -73,13 +77,24 @@ myLayoutHook = desktopLayoutModifiers $ tiled ||| Mirror tiled ||| Full ||| Grid
 -- My Keybindings
 --
 myKeys conf@(XConfig {XMonad.modMask = modm}) =
-    [ ((modm, xK_F2 ), shellPrompt  defaultXPConfig)
-    , ((modm, xK_f), runOrRaise "firefox" (className =? "Namoroka"))
-    , ((modm, xK_s), runOrRaise "thunderbird" (className =? "Shredder"))
-    , ((modm .|. shiftMask, xK_g     ), windowPromptGoto  defaultXPConfig)
-    , ((modm .|. shiftMask, xK_b     ), windowPromptBring defaultXPConfig)
-    , ((modm .|. shiftMask, xK_s), scratchpadSpawnActionCustom "gnome-terminal --disable-factory --name scratchpad" )
+    [ ((modm              , xK_F2 ), shellPrompt  defaultXPConfig)
+    , ((modm              , xK_f  ), runOrRaise "firefox" (className =? "Namoroka"))
+    , ((modm              , xK_e  ), runOrRaise "thunderbird" (className =? "Shredder"))
+    , ((modm .|. shiftMask, xK_g  ), windowPromptGoto  defaultXPConfig)
+    , ((modm .|. shiftMask, xK_b  ), windowPromptBring defaultXPConfig)
+    , ((modm .|. shiftMask, xK_s  ), scratchpadSpawnActionCustom "gnome-terminal --disable-factory --name scratchpad" )
+    , ((modm              , xK_s  ), SM.submap $ searchEngineMap $ S.promptSearch P.defaultXPConfig)
+    , ((modm .|. shiftMask, xK_s  ), SM.submap $ searchEngineMap $ S.selectSearch)
     ]
+
+--
+-- Search Engines
+--
+searchEngineMap method = M.fromList $
+       [ ((0, xK_g), method S.google)
+       , ((0, xK_m), method S.maps)
+       , ((0, xK_w), method S.wikipedia)
+       ]
 
 -- Merge myKeys with default config
 newKeys x  = M.union (keys gnomeConfig x) (M.fromList (myKeys x))
