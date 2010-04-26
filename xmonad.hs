@@ -9,13 +9,15 @@ import XMonad.Actions.WindowGo
 import XMonad.Prompt
 import XMonad.Prompt.Shell
 import XMonad.Prompt.XMonad
+import XMonad.Prompt.Window
+import XMonad.Util.Scratchpad
 import System.IO
 import DBus
 import DBus.Connection
 import DBus.Message
 import Control.OldException
 import Control.Monad
-
+import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 
 -- This retry is really awkward, but sometimes DBus won't let us get our
@@ -33,8 +35,8 @@ getWellKnownName dbus = tryGetName `catchDyn` (\ (DBus.Error _ _) ->
 --
 -- My Manage Hook
 --
-myManageHook :: [ManageHook]
-myManageHook = 
+-- myManageHook :: [ManageHook]
+myManageHook = composeAll (
     [ resource  =? "Do"                       --> doIgnore
     , resource  =? "Do.exe"                   --> doIgnore
     , resource  =? "/usr/lib/gnome-do/Do.exe" --> doIgnore
@@ -45,7 +47,9 @@ myManageHook =
     , title     =? "Thunderbird Preferences"  --> doFloat
     , title     =? "Shredder Preferences"     --> doFloat
     , className =? "Gimp-2.6"                 --> doFloat
-    ]
+    , manageHook gnomeConfig
+    , scratchpadManageHook (W.RationalRect 0.1 0.1 0.75 0.75)
+    ])
 
 
 --
@@ -72,6 +76,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) =
     [ ((modm, xK_F2 ), shellPrompt  defaultXPConfig)
     , ((modm, xK_f), runOrRaise "firefox" (className =? "Namoroka"))
     , ((modm, xK_s), runOrRaise "thunderbird" (className =? "Shredder"))
+    , ((modm .|. shiftMask, xK_g     ), windowPromptGoto  defaultXPConfig)
+    , ((modm .|. shiftMask, xK_b     ), windowPromptBring defaultXPConfig)
+    , ((modm .|. shiftMask, xK_s), scratchpadSpawnActionCustom "gnome-terminal --disable-factory --name scratchpad" )
     ]
 
 -- Merge myKeys with default config
@@ -88,7 +95,7 @@ main = withConnection Session $ \ dbus -> do
      xmonad $ gnomeConfig
 	    { modMask = mod4Mask 
             , keys = newKeys
-	    , manageHook = manageHook gnomeConfig <+> composeAll myManageHook
+	    , manageHook = myManageHook
 	    , layoutHook = myLayoutHook
             , logHook    = dynamicLogWithPP $ defaultPP {
                              ppOutput   = \ str -> do
