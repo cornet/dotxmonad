@@ -10,6 +10,7 @@ import XMonad.Prompt
 import XMonad.Prompt.Shell
 import XMonad.Prompt.XMonad
 import XMonad.Prompt.Window
+import XMonad.Hooks.UrgencyHook
 import XMonad.Util.Scratchpad
 import System.IO
 import DBus
@@ -78,12 +79,10 @@ myLayoutHook = desktopLayoutModifiers $ tiled ||| Mirror tiled ||| Full ||| Grid
 --
 myKeys conf@(XConfig {XMonad.modMask = modm}) =
     [ ((modm              , xK_F2 ), shellPrompt  defaultXPConfig)
-    , ((modm              , xK_f  ), runOrRaise "firefox" (className =? "Namoroka"))
-    , ((modm              , xK_e  ), runOrRaise "thunderbird" (className =? "Shredder"))
+    , ((modm              , xK_f  ), runOrRaise "google-chrome" (className =? "Google-chrome"))
     , ((modm .|. shiftMask, xK_g  ), windowPromptGoto  defaultXPConfig)
     , ((modm .|. shiftMask, xK_b  ), windowPromptBring defaultXPConfig)
-    , ((modm .|. shiftMask, xK_s  ), scratchpadSpawnActionCustom "gnome-terminal --disable-factory --name scratchpad" )
-    , ((modm              , xK_s  ), SM.submap $ searchEngineMap $ S.promptSearch P.defaultXPConfig)
+    , ((modm              , xK_s  ), scratchpadSpawnActionCustom "gnome-terminal --disable-factory --name scratchpad" )
     , ((modm .|. shiftMask, xK_s  ), SM.submap $ searchEngineMap $ S.selectSearch)
     ]
 
@@ -107,7 +106,7 @@ main = withConnection Session $ \ dbus -> do
      putStrLn "Getting well-known name."
      getWellKnownName dbus
      putStrLn "Got name, starting XMonad."
-     xmonad $ gnomeConfig
+     xmonad $ withUrgencyHook NoUrgencyHook gnomeConfig
 	    { modMask = mod4Mask 
             , keys = newKeys
 	    , manageHook = myManageHook
@@ -125,7 +124,7 @@ main = withConnection Session $ \ dbus -> do
                                  (\ (DBus.Error _name _msg) ->
                                    return 0)
                                return ()
-                  , ppTitle    = pangoColor "#ffffff" . shorten 50
+                  , ppTitle    = pangoColor "#ffffff" . shorten 25
                   , ppCurrent  = pangoColor "#ffffff" . wrap "[" "]"
                   , ppVisible  = pangoColor "#663366" . wrap "(" ")"
                   , ppHidden   = wrap "" ""
