@@ -113,7 +113,7 @@ main = withConnection Session $ \ dbus -> do
 	    , layoutHook = myLayoutHook
             , logHook    = dynamicLogWithPP $ defaultPP {
                              ppOutput   = \ str -> do
-                               let str'  = "<span font=\"Monospace 9\">" ++ str ++ 
+                               let str'  = "<span font=\"Droid Sans Mono 8\">" ++ str ++ 
                                            "</span>"
                                    str'' = sanitize str'
                                msg <- newSignal "/org/xmonad/Log" "org.xmonad.Log" 
