@@ -53,6 +53,7 @@ myManageHook = composeAll (
     , title     =? "Thunderbird Preferences"  --> doFloat
     , title     =? "Shredder Preferences"     --> doFloat
     , className =? "Gimp-2.6"                 --> doFloat
+    , className =? "Stickynotes_applet"       --> doFloat
     , manageHook gnomeConfig
     , scratchpadManageHook (W.RationalRect 0.1 0.1 0.75 0.75)
     ])
@@ -115,7 +116,7 @@ main = withConnection Session $ \ dbus -> do
 	    , layoutHook = myLayoutHook
             , logHook    = dynamicLogWithPP $ defaultPP {
                              ppOutput   = \ str -> do
-                               let str'  = "<span font=\"Monospace 9\">" ++ str ++ 
+                               let str'  = "<span font=\"Droid Sans Mono 8\">" ++ str ++ 
                                            "</span>"
                                    str'' = sanitize str'
                                msg <- newSignal "/org/xmonad/Log" "org.xmonad.Log" 
@@ -126,7 +127,7 @@ main = withConnection Session $ \ dbus -> do
                                  (\ (DBus.Error _name _msg) ->
                                    return 0)
                                return ()
-                  , ppTitle    = pangoColor "#ffffff" . shorten 50
+                  , ppTitle    = pangoColor "#ffffff" . shorten 25
                   , ppCurrent  = pangoColor "#ffffff" . wrap "[" "]"
                   , ppVisible  = pangoColor "#663366" . wrap "(" ")"
                   , ppHidden   = wrap "" ""
