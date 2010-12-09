@@ -80,12 +80,10 @@ myLayoutHook = desktopLayoutModifiers $ toggleLayouts Full $ tiled ||| Mirror ti
 --
 myKeys conf@(XConfig {XMonad.modMask = modm}) =
     [ ((modm              , xK_F2 ), shellPrompt  defaultXPConfig)
-    , ((modm              , xK_f  ), runOrRaise "firefox" (className =? "Namoroka"))
-    , ((modm              , xK_e  ), runOrRaise "thunderbird" (className =? "Shredder"))
+    , ((modm              , xK_c  ), runOrRaise "google-chome" (className =? "Google-chrome"))
     , ((modm .|. shiftMask, xK_g  ), windowPromptGoto  defaultXPConfig)
     , ((modm .|. shiftMask, xK_b  ), windowPromptBring defaultXPConfig)
     , ((modm              , xK_s  ), scratchpadSpawnActionCustom "gnome-terminal --disable-factory --name scratchpad" )
---    , ((modm              , xK_s  ), scratchpadSpawnAction gnomeConfig { terminal="urxvt" })
     , ((modm .|. shiftMask, xK_s  ), SM.submap $ searchEngineMap $ S.selectSearch)
     , ((modm .|. shiftMask, xK_f  ), sendMessage ToggleLayout)
     ]
