@@ -52,6 +52,7 @@ myManageHook = composeAll (
     , title     =? "Thunderbird Preferences"  --> doFloat
     , title     =? "Shredder Preferences"     --> doFloat
     , className =? "Gimp-2.6"                 --> doFloat
+    , className =? "Stickynotes_applet"       --> doFloat
     , manageHook gnomeConfig
     , scratchpadManageHook (W.RationalRect 0.1 0.1 0.75 0.75)
     ])
