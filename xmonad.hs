@@ -4,6 +4,7 @@ import XMonad.ManageHook
 import XMonad.Config.Desktop
 import XMonad.Layout.Grid
 import XMonad.Layout.ToggleLayouts
+import XMonad.Layout.LayoutHints
 import XMonad.Hooks.DynamicLog
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Actions.WindowGo
@@ -62,7 +63,7 @@ myManageHook = composeAll (
 --
 -- My Layout Hook
 --
-myLayoutHook = desktopLayoutModifiers $ toggleLayouts Full $ tiled ||| Mirror tiled ||| Full ||| Grid
+myLayoutHook = desktopLayoutModifiers $ toggleLayouts Full $ layoutHintsToCenter(tiled) ||| layoutHintsToCenter(Mirror tiled) ||| layoutHintsToCenter(Full) ||| layoutHintsToCenter(Grid)
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
